@@ -135,8 +135,8 @@
 <c:forEach var="n" items="${newsList}">
     <tr>
         <td>${n.title}</td>
-        <td>${n.categoryId}</td>
-        <td>${n.author}</td>
+        <td>${n.categoryName}</td>
+		<td>${n.authorName}</td>
         <td>${n.postedDate}</td>
         <td>${n.status}</td>
      <td>
