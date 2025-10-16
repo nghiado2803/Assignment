@@ -9,37 +9,41 @@ import java.util.List;
 
 public class NewsDAOImpl implements NewsDAO {
 
-    @Override
-    public List<News> findAll() {
-        List<News> list = new ArrayList<>();
-        String sql = """
-            SELECT n.*, c.Name AS CategoryName
-            FROM NEWS n
-            LEFT JOIN CATEGORIES c ON n.CategoryId = c.Id
-            ORDER BY n.PostedDate DESC
-            """;
-        try (Connection con = Jdbc.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                News n = mapResultSetToNews(rs);
-                n.setCategoryName(rs.getNString("CategoryName"));
-                list.add(n);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
+	@Override
+	public List<News> findAll() {
+	    List<News> list = new ArrayList<>();
+	    String sql = """
+	        SELECT n.*, c.Name AS CategoryName, u.Fullname AS AuthorName
+	        FROM NEWS n
+	        LEFT JOIN CATEGORIES c ON n.CategoryId = c.Id
+	        LEFT JOIN USERS u ON n.Author = u.Id
+	        ORDER BY n.PostedDate DESC
+	    """;
+	    try (Connection con = Jdbc.getConnection();
+	         PreparedStatement ps = con.prepareStatement(sql);
+	         ResultSet rs = ps.executeQuery()) {
+	        while (rs.next()) {
+	            News n = mapResultSetToNews(rs);
+	            n.setCategoryName(rs.getNString("CategoryName"));
+	            n.setAuthorName(rs.getNString("AuthorName")); 
+	            list.add(n);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return list;
+	}
+
 
     @Override
     public News findById(String id) {
         String sql = """
-            SELECT n.*, c.Name AS CategoryName
+            SELECT n.*, c.Name AS CategoryName, u.Fullname AS AuthorName
             FROM NEWS n
             LEFT JOIN CATEGORIES c ON n.CategoryId = c.Id
+            LEFT JOIN USERS u ON n.Author = u.Id
             WHERE n.Id = ?
-            """;
+        """;
         try (Connection con = Jdbc.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, id);
@@ -47,6 +51,7 @@ public class NewsDAOImpl implements NewsDAO {
                 if (rs.next()) {
                     News n = mapResultSetToNews(rs);
                     n.setCategoryName(rs.getNString("CategoryName"));
+                    n.setAuthorName(rs.getNString("AuthorName")); 
                     return n;
                 }
             }
@@ -55,6 +60,7 @@ public class NewsDAOImpl implements NewsDAO {
         }
         return null;
     }
+
 
     @Override
     public List<News> findByCategory(String categoryId) {
@@ -256,7 +262,6 @@ public class NewsDAOImpl implements NewsDAO {
     public List<News> findTopViewed(int limit) {
         List<News> list = new ArrayList<>();
         String sql = "SELECT TOP (?) n.*, c.Name AS CategoryName FROM NEWS n LEFT JOIN CATEGORIES c ON n.CategoryId = c.Id ORDER BY n.ViewCount DESC, n.PostedDate DESC";
-        // NOTE: some DB (SQL Server) uses different TOP syntax with parameter; if your driver doesn't support TOP(?), use FETCH
         try (Connection con = Jdbc.getConnection();
              PreparedStatement ps = con.prepareStatement("SELECT n.*, c.Name AS CategoryName FROM NEWS n LEFT JOIN CATEGORIES c ON n.CategoryId = c.Id ORDER BY n.ViewCount DESC, n.PostedDate DESC")) {
             try (ResultSet rs = ps.executeQuery()) {
@@ -526,24 +531,21 @@ public class NewsDAOImpl implements NewsDAO {
 
     @Override
     public News getById(String id) {
-        String sql = "SELECT * FROM NEWS WHERE Id = ?";
+        String sql = """
+            SELECT n.*, c.Name AS CategoryName, u.Fullname AS AuthorName
+            FROM NEWS n
+            LEFT JOIN CATEGORIES c ON n.CategoryId = c.Id
+            LEFT JOIN USERS u ON n.Author = u.Id
+            WHERE n.Id = ?
+        """;
         try (Connection conn = Jdbc.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                News n = new News();
-                n.setId(rs.getString("Id"));
-                n.setTitle(rs.getString("Title"));
-                n.setContent(rs.getString("Content"));
-                n.setImage(rs.getString("Image"));
-                n.setPostedDate(rs.getDate("PostedDate"));
-                n.setAuthor(rs.getString("Author"));
-                n.setViewCount(rs.getInt("ViewCount"));
-                n.setCategoryId(rs.getString("CategoryId"));
-                n.setHome(rs.getBoolean("Home"));
-                n.setPosition(rs.getInt("Position"));
-                n.setStatus(rs.getString("Status"));
+                News n = mapResultSetToNews(rs);
+                n.setCategoryName(rs.getNString("CategoryName"));
+                n.setAuthorName(rs.getNString("AuthorName")); 
                 return n;
             }
         } catch (Exception e) {
@@ -551,6 +553,7 @@ public class NewsDAOImpl implements NewsDAO {
         }
         return null;
     }
+
     @Override
     public void updateFeature(String id, boolean value) {
         String sql = "UPDATE NEWS SET isFeatured = ? WHERE Id = ?";
@@ -608,6 +611,42 @@ public class NewsDAOImpl implements NewsDAO {
             System.out.println("Lỗi khi cập nhật lượt xem: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+    @Override
+    public List<News> getAllNews() {
+        List<News> list = new ArrayList<>();
+        String sql = "SELECT n.*, c.Name AS CategoryName, u.Fullname AS AuthorName " +
+                     "FROM NEWS n " +
+                     "LEFT JOIN CATEGORIES c ON n.CategoryId = c.Id " +
+                     "LEFT JOIN USERS u ON n.Author = u.Id";
+
+        try (Connection conn = Jdbc.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                News n = new News();
+                n.setId(rs.getString("Id"));
+                n.setTitle(rs.getString("Title"));
+                n.setContent(rs.getString("Content"));
+                n.setImage(rs.getString("Image"));
+                n.setPostedDate(rs.getDate("PostedDate"));
+                n.setAuthor(rs.getString("Author"));
+                n.setCategoryId(rs.getString("CategoryId"));
+                n.setStatus(rs.getString("Status"));
+                n.setHome(rs.getBoolean("Home"));
+                n.setPosition(rs.getInt("Position"));
+                n.setViewCount(rs.getInt("ViewCount"));
+
+                n.setCategoryName(rs.getString("CategoryName"));
+                n.setAuthorName(rs.getString("AuthorName"));
+
+                list.add(n);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
 
