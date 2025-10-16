@@ -123,7 +123,7 @@
                                 <c:forEach var="n" items="${newsList}">
                                     <tr>
                                         <td>${n.title}</td>
-                                        <td>${n.categoryId}</td>
+                                       <td>${n.categoryName}</td>
                                         <td><fmt:formatDate value="${n.postedDate}" pattern="dd/MM/yyyy" /></td>
                                         <td>
                                         	<a href="${pageContext.request.contextPath}/add_edit_news?id=${n.id}" class="edit-btn">Sửa</a>
