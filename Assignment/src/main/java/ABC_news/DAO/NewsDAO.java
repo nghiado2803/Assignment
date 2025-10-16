@@ -27,4 +27,5 @@ public interface NewsDAO {
     void updateApproved(String id, boolean value);
     void updateEmailed(String id, boolean value);
     public void incrementViewCount(String id);
+    List<News> getAllNews();
 }
