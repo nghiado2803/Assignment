@@ -18,6 +18,7 @@ public class News {
     private boolean isFeatured;
     private boolean isApproved;
     private boolean isEmailed;
+    private String authorName;
 
     public News() {}
 
@@ -88,4 +89,10 @@ public class News {
 
     public boolean isEmailed() { return isEmailed; }
     public void setEmailed(boolean isEmailed) { this.isEmailed = isEmailed; }
+    public String getAuthorName() {
+        return authorName;
+    }
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
+    }
 }
