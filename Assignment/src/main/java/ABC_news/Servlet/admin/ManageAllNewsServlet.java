@@ -115,7 +115,6 @@ public class ManageAllNewsServlet extends HttpServlet {
         boolean home = "1".equals(homeParam) || "true".equalsIgnoreCase(homeParam);
         Integer position = (positionStr != null && !positionStr.isEmpty()) ? Integer.valueOf(positionStr) : null;
 
-        // Upload ảnh
         Part imagePart = req.getPart("image");
         String fileName = null;
         String uploadPath = getServletContext().getRealPath("/uploads");
@@ -152,8 +151,13 @@ public class ManageAllNewsServlet extends HttpServlet {
             session.setAttribute("message", "Lưu tin thất bại!");
         }
 
-        resp.sendRedirect(req.getContextPath() + "/admin/manage_all_news");
+        if (user.isRole()) { 
+            resp.sendRedirect(req.getContextPath() + "/admin/manage_all_news");
+        } else {
+            resp.sendRedirect(req.getContextPath() + "/reporter");
+        }
     }
+
 
     private void handleDelete(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
