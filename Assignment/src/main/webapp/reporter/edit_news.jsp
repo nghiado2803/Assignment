@@ -8,6 +8,7 @@
     String fullname = (user != null && user.getFullname() != null)
             ? user.getFullname() : "Người dùng";
     boolean isAdmin = (user != null && user.isRole()); 
+    request.setAttribute("isAdmin", isAdmin);
 %>
 
 <!DOCTYPE html>
@@ -37,26 +38,27 @@
         <nav class="menu">
             <a href="${pageContext.request.contextPath}/index"
                class="${fn:contains(pageContext.request.requestURI, '/index') ? 'active' : ''}">Trang chủ</a>
-               <a href="${pageContext.request.contextPath}/category?name=Văn hóa"
-   class="${fn:contains(pageContext.request.requestURI, 'Văn hóa') ? 'active' : ''}">Văn hóa</a>
 
-<a href="${pageContext.request.contextPath}/category?name=Pháp luật"
-   class="${fn:contains(pageContext.request.requestURI, 'Pháp luật') ? 'active' : ''}">Pháp luật</a>
+            <a href="${pageContext.request.contextPath}/category?name=Văn hóa"
+               class="${fn:contains(pageContext.request.requestURI, 'Văn hóa') ? 'active' : ''}">Văn hóa</a>
 
-<a href="${pageContext.request.contextPath}/category?name=Thể thao"
-   class="${fn:contains(pageContext.request.requestURI, 'Thể thao') ? 'active' : ''}">Thể thao</a>
+            <a href="${pageContext.request.contextPath}/category?name=Pháp luật"
+               class="${fn:contains(pageContext.request.requestURI, 'Pháp luật') ? 'active' : ''}">Pháp luật</a>
+
+            <a href="${pageContext.request.contextPath}/category?name=Thể thao"
+               class="${fn:contains(pageContext.request.requestURI, 'Thể thao') ? 'active' : ''}">Thể thao</a>
 
             <c:choose>
-                <c:when test="<%= isAdmin %>">
+                <c:when test="${isAdmin}">
                     <a href="${pageContext.request.contextPath}/admin/manage_all_news"
                        class="${fn:contains(pageContext.request.requestURI, '/admin') ? 'active' : ''}">
-                        Quản lý tin
+                        Quản lý
                     </a>
                 </c:when>
                 <c:otherwise>
-                    <a href="${pageContext.request.contextPath}/reporter/manage_my_news"
+                    <a href="${pageContext.request.contextPath}/reporter"
                        class="${fn:contains(pageContext.request.requestURI, '/reporter') ? 'active' : ''}">
-                        Quản lý tin
+                       Quản lý tin
                     </a>
                 </c:otherwise>
             </c:choose>
@@ -68,6 +70,7 @@
         </div>
     </div>
 </header>
+
 
 <!-- MAIN CONTENT -->
 <div class="container">
