@@ -20,6 +20,30 @@
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
 
     <style>
+    .action-bar a {
+    display: inline-block;
+    background: linear-gradient(135deg, #ffcc00, #ffb300);
+    color: #000;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    font-family: 'Roboto', sans-serif;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+.action-bar a:hover {
+    background: linear-gradient(135deg, #ffd740, #ffc107);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.3);
+}
+
+.action-bar {
+    margin-bottom: 15px;
+    text-align: right; 
+}
+    
         .popup-overlay {
             position: fixed;
             top: 0;
@@ -72,8 +96,10 @@
    class="${fn:contains(pageContext.request.requestURI, 'Thể thao') ? 'active' : ''}">Thể thao</a>
 
 
-    <a href="${pageContext.request.contextPath}/reporter"
-       class="${fn:contains(pageContext.request.requestURI, '/admin') ? 'active' : ''}">Quản lý tin</a>
+   <a href="${pageContext.request.contextPath}/reporter"
+   class="${fn:contains(pageContext.request.requestURI, '/reporter') ? 'active' : ''}">
+   Quản lý tin
+</a>
 </nav>
 
             <div class="header-actions">
@@ -81,7 +107,7 @@
 				    <input type="text" name="keyword" placeholder="Tìm kiếm tin tức..." class="search-bar" required>
 				    <button type="submit" class="search-btn">🔍</button>
 				</form>
-                <span class="user-info">Xin chào, <strong><%= fullname %></strong></span>
+                <span class="user-info">Xin chào <strong><%= fullname %></strong></span>
                 <a href="${pageContext.request.contextPath}/logout" class="logout-btn">Đăng xuất</a>
             </div>
         </div>
@@ -97,7 +123,7 @@
             <section class="center-col">
                 <h2>Quản lý tin tức của bạn</h2>
                 <div class="action-bar">
-                    <a href="${pageContext.request.contextPath}/add_edit_news" class="add-news-btn">Thêm tin mới</a>
+					<a href="${pageContext.request.contextPath}/admin/add_edit_news">Thêm tin mới</a>
                 </div>
 
                 <table class="news-table">
@@ -126,7 +152,7 @@
                                        <td>${n.categoryName}</td>
                                         <td><fmt:formatDate value="${n.postedDate}" pattern="dd/MM/yyyy" /></td>
                                         <td>
-                                        	<a href="${pageContext.request.contextPath}/add_edit_news?id=${n.id}" class="edit-btn">Sửa</a>
+											<a href="${pageContext.request.contextPath}/admin/add_edit_news?id=${n.id}" class="edit-btn">Sửa</a>
                                             <a href="${pageContext.request.contextPath}/delete_news?id=${n.id}" 
                                                class="delete-btn" 
                                                onclick="return confirm('Bạn có chắc muốn xóa tin này?')">Xóa</a>
