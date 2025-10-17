@@ -13,8 +13,6 @@ public interface NewsDAO {
     boolean delete(String id); 						 // Xóa tin
     List<News> searchNews(String keyword);
     List<News> selectByAuthor(String authorId);
-    List<News> findTopViewed(int limit);
-    List<News> findLatest(int limit);
     boolean updateStatus(String id, String newStatus);
     List<News> findTopViewedApproved(int limit);
     List<News> findLatestApproved(int limit);
