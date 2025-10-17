@@ -103,38 +103,69 @@ public class ManageUsersServlet extends HttpServlet {
 
     private void editUser(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
+        req.setCharacterEncoding("UTF-8");
+        HttpSession session = req.getSession();
+        User currentUser = (User) session.getAttribute("user");
+
         String id = req.getParameter("id");
         String fullname = req.getParameter("fullname");
         String email = req.getParameter("email");
         String password = req.getParameter("password");
         String mobile = req.getParameter("mobile");
         String birthday = req.getParameter("birthday");
-        boolean gender = Boolean.parseBoolean(req.getParameter("gender"));
-        boolean role = Boolean.parseBoolean(req.getParameter("role"));
+        String genderStr = req.getParameter("gender");
+        String roleStr = req.getParameter("role");
 
-        User user = new User();
-        user.setId(id);
-        user.setFullname(fullname);
-        user.setEmail(email);
-        user.setPassword(password);
-        user.setMobile(mobile);
-        if (birthday != null && !birthday.isEmpty()) {
-            user.setBirthday(LocalDate.parse(birthday));
+        User existingUser = userDAO.findById(id);
+        if (existingUser == null) {
+            session.setAttribute("message", "Không tìm thấy người dùng cần cập nhật!");
+            resp.sendRedirect(req.getContextPath() + "/admin/manage_users");
+            return;
         }
-        user.setGender(gender);
-        user.setRole(role);
 
-        boolean success = userDAO.update(user);
-        req.getSession().setAttribute("message",
+        existingUser.setFullname(fullname);
+        existingUser.setEmail(email);
+        existingUser.setMobile(mobile);
+        existingUser.setGender("1".equals(genderStr));
+
+        if (currentUser != null && currentUser.isRole()) {
+            existingUser.setRole("1".equals(roleStr));
+        }
+
+        if (birthday != null && !birthday.isEmpty()) {
+            try {
+                existingUser.setBirthday(LocalDate.parse(birthday));
+            } catch (Exception e) {
+                session.setAttribute("message", "Ngày sinh không hợp lệ!");
+                resp.sendRedirect(req.getContextPath() + "/admin/manage_users");
+                return;
+            }
+        }
+
+        if (password != null && !password.trim().isEmpty()) {
+            existingUser.setPassword(password);
+        }
+
+        boolean success = userDAO.update(existingUser);
+        session.setAttribute("message",
                 success ? "Cập nhật người dùng thành công!"
                         : "Cập nhật người dùng thất bại!");
 
         resp.sendRedirect(req.getContextPath() + "/admin/manage_users");
     }
 
+
+
     private void deleteUser(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
         String id = req.getParameter("id");
+
+        User targetUser = userDAO.findById(id);
+        if (targetUser != null && targetUser.isRole()) { 
+            req.getSession().setAttribute("message", "Không thể xóa tài khoản quản trị!");
+            resp.sendRedirect(req.getContextPath() + "/admin/manage_users");
+            return;
+        }
 
         boolean deleted = userDAO.delete(id);
         req.getSession().setAttribute("message",
@@ -143,4 +174,5 @@ public class ManageUsersServlet extends HttpServlet {
 
         resp.sendRedirect(req.getContextPath() + "/admin/manage_users");
     }
+
 }
