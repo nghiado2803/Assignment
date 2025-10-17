@@ -48,7 +48,7 @@
 		    <% if (!isLoggedIn) { %>
 		        <button class="login-btn" onclick="showModal('login-modal')">Đăng nhập</button>
 		    <% } else { %>
-		        <span class="user-info">Xin chào, <strong><%= user.getFullname() %></strong></span>
+		        <span class="user-info">Xin chào <strong><%= user.getFullname() %></strong></span>
 			<a href="${pageContext.request.contextPath}/logout" class="logout-btn">Đăng xuất</a>
 		    <% } %>
 		</div>
