@@ -25,7 +25,7 @@ public class AddEditNewsServlet extends HttpServlet {
 
 	    CategoryDAO categoryDAO = new CategoryDAOImpl();
 	    List<Category> categories = categoryDAO.findAll();
-	    System.out.println(">>> Có " + categories.size() + " thể loại");
+	    System.out.println("Có " + categories.size() + " thể loại");
 	    req.setAttribute("categories", categories);
 
 	    String id = req.getParameter("id");
@@ -35,10 +35,10 @@ public class AddEditNewsServlet extends HttpServlet {
 	        News news = newsDAO.findById(id);
 
 	        if (news != null) {
-	            System.out.println(">>> Tìm thấy tin: " + news.getTitle());
+	            System.out.println("Tìm thấy tin: " + news.getTitle());
 	            req.setAttribute("news", news);
 	        } else {
-	            System.out.println(">>> Không tìm thấy tin với id này!");
+	            System.out.println("Không tìm thấy tin với id này!");
 	        }
 	    }
 
