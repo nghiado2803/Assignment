@@ -19,6 +19,30 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Open+Sans:wght@400;600&display=swap">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
     <style>
+    .action-bar {
+    margin-bottom: 15px;
+    text-align: right;
+}
+
+.action-bar a {
+    display: inline-block;
+    background: linear-gradient(135deg, #ffcc00, #ffb300);
+    color: #000;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    font-family: 'Roboto', sans-serif;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+.action-bar a:hover {
+    background: linear-gradient(135deg, #ffd740, #ffc107);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.3);
+}
+    
 .action-btn {
     display: inline-block;
     padding: 8px 16px;
@@ -117,7 +141,7 @@
     <section class="center-col">
         <h2>Quản lý tất cả tin tức</h2>
         <div class="action-bar">
-                    <a href="${pageContext.request.contextPath}/add_edit_news" class="add-news-btn">Thêm tin mới</a>
+        	<a href="${pageContext.request.contextPath}/admin/add_edit_news">Thêm tin mới</a>
         </div>
 
         <table class="news-table">
