@@ -108,7 +108,7 @@
         </section>
 
         <!-- Right Column: Sidebar -->
-         <%@ include file="../includes/news_index_left.jsp" %>
+         <%@ include file="../includes/news_index_right.jsp" %>
 </div>
 
 <!-- Footer -->
