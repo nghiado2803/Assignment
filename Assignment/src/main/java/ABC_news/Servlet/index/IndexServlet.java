@@ -200,6 +200,9 @@ public class IndexServlet extends HttpServlet {
 
     private void changePassword(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html; charset=UTF-8");
         HttpSession session = req.getSession();
         User user = (User) session.getAttribute("user");
 
