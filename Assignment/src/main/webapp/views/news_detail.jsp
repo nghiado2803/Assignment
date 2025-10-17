@@ -18,11 +18,6 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Open+Sans:wght@400;600&display=swap">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
     <style>
-    /* -------------------------------
-   News Detail Page Styles
-   Author: ABC News
-   ------------------------------- */
-
 .news-detail-container {
     max-width: 900px;
     margin: 40px auto;
