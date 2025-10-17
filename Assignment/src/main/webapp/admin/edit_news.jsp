@@ -53,7 +53,7 @@
                     </a>
                 </c:when>
                 <c:otherwise>
-                    <a href="${pageContext.request.contextPath}/reporter/manage_my_news"
+                    <a href="${pageContext.request.contextPath}/reporter"
                        class="${fn:contains(pageContext.request.requestURI, '/reporter') ? 'active' : ''}">
                         Quản lý tin
                     </a>
