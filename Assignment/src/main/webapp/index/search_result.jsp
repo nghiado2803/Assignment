@@ -18,11 +18,54 @@
 
 <!-- Header -->
 <header class="site-header">
-    <div class="container">
-        <div class="logo">ABC <span>News</span></div>
-        <jsp:include page="/includes/news_index_nav.jsp" />
-    </div>
-</header>
+        <div class="container">
+            <div class="logo">ABC <span>News</span></div>
+            <%@ page import="ABC_news.Entity.User" %>
+<%
+    User user = (User) session.getAttribute("user");
+    boolean isLoggedIn = (user != null);
+    boolean isAdmin = false;
+    if (isLoggedIn) {
+        isAdmin = user.isRole(); 
+    }
+%>
+<nav class="menu">
+    <a href="${pageContext.request.contextPath}/index"
+       class="${fn:endsWith(pageContext.request.requestURI, '/index') ? 'active' : ''}">Trang chủ</a>
+
+    <a href="${pageContext.request.contextPath}/category?name=Văn hóa"
+       class="${fn:contains(pageContext.request.queryString, 'Văn hóa') ? 'active' : ''}">Văn hóa</a>
+
+    <a href="${pageContext.request.contextPath}/category?name=Pháp luật"
+       class="${fn:contains(pageContext.request.queryString, 'Pháp luật') ? 'active' : ''}">Pháp luật</a>
+
+    <a href="${pageContext.request.contextPath}/category?name=Thể thao"
+       class="${fn:contains(pageContext.request.queryString, 'Thể thao') ? 'active' : ''}">Thể thao</a>
+
+    <c:if test="${not empty sessionScope.user}">
+        <c:choose>
+            <c:when test="${sessionScope.user.role}">
+                <a href="${pageContext.request.contextPath}/admin">Quản trị</a>
+            </c:when>
+            <c:otherwise>
+                <a href="${pageContext.request.contextPath}/reporter">Quản lý tin</a>
+            </c:otherwise>
+        </c:choose>
+    </c:if>
+</nav>
+
+
+
+		
+		<div class="header-actions">
+		    	<form action="${pageContext.request.contextPath}/search" method="get" class="search-form">
+				    <input type="text" name="keyword" placeholder="Tìm kiếm tin tức..." class="search-bar" required>
+				    <button type="submit" class="search-btn">🔍</button>
+				</form>
+		</div>
+		
+		
+    </header>
 
 <!-- Main Content -->
 <div class="container">
@@ -39,11 +82,10 @@
 
             <c:forEach var="news" items="${searchResults}">
                 <article class="news-item">
-                    <img src="${pageContext.request.contextPath}/images/${news.image}" alt="Hình ảnh tin tức"
-                         class="news-thumb">
+			   <img src="${pageContext.request.contextPath}/uploads/${news.image}" alt="Hình ảnh tin tức" class="news-thumb">
                     <div class="news-content">
                         <h3>
-                            <a href="${pageContext.request.contextPath}/index/news_detail.jsp?id=${news.id}">
+							<a href="${pageContext.request.contextPath}/detail?id=${news.id}">
                                 <c:out value="${news.title}"/>
                             </a>
                         </h3>
