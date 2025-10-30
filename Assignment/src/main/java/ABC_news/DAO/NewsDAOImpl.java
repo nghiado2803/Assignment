@@ -13,21 +13,39 @@ public class NewsDAOImpl implements NewsDAO {
 	public List<News> findAll() {
 	    List<News> list = new ArrayList<>();
 	    String sql = """
-	        SELECT n.*, c.Name AS CategoryName, u.Fullname AS AuthorName
-	        FROM NEWS n
-	        LEFT JOIN CATEGORIES c ON n.CategoryId = c.Id
-	        LEFT JOIN USERS u ON n.Author = u.Id
-	        ORDER BY n.PostedDate DESC
-	    """;
+	    	    SELECT n.Id, n.Title, n.Content, n.Image, n.PostedDate, n.Author, n.ViewCount, n.CategoryId, n.Home, n.Position, n.Status,
+	    	           n.IsEmailed,
+	    	           c.Name AS CategoryName, u.Fullname AS AuthorName
+	    	    FROM NEWS n
+	    	    LEFT JOIN CATEGORIES c ON n.CategoryId = c.Id
+	    	    LEFT JOIN USERS u ON n.Author = u.Id
+	    	    ORDER BY n.PostedDate DESC
+	    	""";
 	    try (Connection con = Jdbc.getConnection();
 	         PreparedStatement ps = con.prepareStatement(sql);
 	         ResultSet rs = ps.executeQuery()) {
-	        while (rs.next()) {
-	            News n = mapResultSetToNews(rs);
-	            n.setCategoryName(rs.getNString("CategoryName"));
-	            n.setAuthorName(rs.getNString("AuthorName")); 
-	            list.add(n);
-	        }
+	    	while (rs.next()) {
+	    	    News n = new News();
+	    	    n.setId(rs.getString("Id"));
+	    	    n.setTitle(rs.getNString("Title"));
+	    	    n.setContent(rs.getNString("Content"));
+	    	    n.setImage(rs.getString("Image"));
+	    	    n.setPostedDate(rs.getDate("PostedDate"));
+	    	    n.setAuthor(rs.getString("Author"));
+	    	    n.setViewCount(rs.getInt("ViewCount"));
+	    	    n.setCategoryId(rs.getString("CategoryId"));
+	    	    n.setHome(rs.getBoolean("Home"));
+	    	    int pos = rs.getInt("Position");
+	    	    if (rs.wasNull()) n.setPosition(null); else n.setPosition(pos);
+	    	    n.setStatus(rs.getNString("Status"));
+
+	    	    n.setEmailed(rs.getBoolean("IsEmailed"));
+
+	    	    n.setCategoryName(rs.getNString("CategoryName"));
+	    	    n.setAuthorName(rs.getNString("AuthorName"));
+	    	    list.add(n);
+	    	}
+	        
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }
@@ -101,42 +119,54 @@ public class NewsDAOImpl implements NewsDAO {
     @Override
     public boolean insert(News news) {
         String sql = """
-            INSERT INTO NEWS (Id, Title, Content, Image, PostedDate, Author, ViewCount, CategoryId, Home, Position, Status)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO NEWS (Title, Content, Image, PostedDate, Author, ViewCount, CategoryId, Home, Position, Status, IsFeatured, IsApproved, IsEmailed)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """;
 
         try (Connection con = Jdbc.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            ps.setString(1, news.getId());
-            ps.setNString(2, news.getTitle());
-            ps.setNString(3, news.getContent());
-            ps.setString(4, news.getImage());
+            ps.setNString(1, news.getTitle());
+            ps.setNString(2, news.getContent());
+            ps.setString(3, news.getImage());
 
             java.sql.Date postedDate = (news.getPostedDate() != null)
                     ? news.getPostedDate()
                     : new java.sql.Date(System.currentTimeMillis());
-            ps.setDate(5, postedDate);
+            ps.setDate(4, postedDate);
 
-            ps.setString(6, news.getAuthor());
-            ps.setInt(7, news.getViewCount());
-            ps.setString(8, news.getCategoryId());
-            ps.setBoolean(9, news.isHome());
+            ps.setInt(5, Integer.parseInt(news.getAuthor())); // hoặc news.getAuthorId()
+            ps.setInt(6, news.getViewCount());
+            ps.setString(7, news.getCategoryId());
+            ps.setBoolean(8, news.isHome());
 
             if (news.getPosition() != null) {
-                ps.setInt(10, news.getPosition());
+                ps.setInt(9, news.getPosition());
             } else {
-                ps.setNull(10, java.sql.Types.INTEGER);
+                ps.setNull(9, java.sql.Types.INTEGER);
             }
 
-            ps.setNString(11, (news.getStatus() != null) ? news.getStatus() : "Chưa duyệt");
+            ps.setNString(10, (news.getStatus() != null) ? news.getStatus() : "Chưa duyệt");
+            ps.setBoolean(11, news.isFeatured());
+            ps.setBoolean(12, news.isApproved());
+            ps.setBoolean(13, news.isEmailed());
 
-            return ps.executeUpdate() > 0;
+            int affectedRows = ps.executeUpdate();
+
+            if (affectedRows > 0) {
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        news.setId(String.valueOf(rs.getInt(1))); 
+                    }
+                }
+                return true;
+            }
 
         } catch (SQLException e) {
             System.err.println("[ERROR] insert(News): " + e.getMessage());
             e.printStackTrace();
         }
+
         return false;
     }
 
@@ -224,7 +254,7 @@ public class NewsDAOImpl implements NewsDAO {
         }
 
         try {
-            n.setEmailed(rs.getBoolean("isEmailed"));
+            n.setEmailed(rs.getBoolean("IsEmailed"));
         } catch (SQLException ex) {
             n.setEmailed(false);
         }
@@ -252,7 +282,7 @@ public class NewsDAOImpl implements NewsDAO {
                 }
             }
 
-            System.out.println(">>> Tìm thấy " + list.size() + " kết quả cho từ khóa: " + keyword);
+            System.out.println("Tìm thấy " + list.size() + " kết quả cho từ khóa: " + keyword);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -261,7 +291,7 @@ public class NewsDAOImpl implements NewsDAO {
     }
 
     public List<News> selectByAuthor(String authorId) {
-        String sql = "SELECT n.*, c.Name AS CategoryName FROM NEWS n LEFT JOIN CATEGORIES c ON n.CategoryId = c.Id WHERE n.Author = ? ORDER BY n.PostedDate DESC";
+    	String sql = "SELECT n.*, c.Name AS CatName FROM NEWS n LEFT JOIN CATEGORIES c ON n.CategoryId = c.Id WHERE n.Author = ?";
         List<News> list = new ArrayList<>();
         try (Connection con = Jdbc.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -269,7 +299,7 @@ public class NewsDAOImpl implements NewsDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     News n = mapResultSetToNews(rs);
-                    n.setCategoryName(rs.getNString("CategoryName"));
+                    n.setCategoryName(rs.getString("CatName"));
                     list.add(n);
                 }
             }
