@@ -10,17 +10,16 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public boolean insert(User user) {
-        String sql = "INSERT INTO USERS (Id, Password, Fullname, Birthday, Gender, Mobile, Email, Role) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO USERS (Password, Fullname, Birthday, Gender, Mobile, Email, Role) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = Jdbc.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, user.getId());
-            ps.setString(2, user.getPassword());
-            ps.setString(3, user.getFullname());
-            ps.setDate(4, user.getBirthday() != null ? Date.valueOf(user.getBirthday()) : null);
-            ps.setBoolean(5, user.isGender());
-            ps.setString(6, user.getMobile());
-            ps.setString(7, user.getEmail());
-            ps.setBoolean(8, user.isRole());
+            ps.setString(1, user.getPassword());
+            ps.setString(2, user.getFullname());
+            ps.setDate(3, user.getBirthday() != null ? Date.valueOf(user.getBirthday()) : null);
+            ps.setBoolean(4, user.isGender());
+            ps.setString(5, user.getMobile());
+            ps.setString(6, user.getEmail());
+            ps.setBoolean(7, user.isRole());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -53,7 +52,6 @@ public class UserDAOImpl implements UserDAO {
         }
         return null;
     }
-
 
     @Override
     public boolean existsByEmail(String email) {
@@ -93,6 +91,7 @@ public class UserDAOImpl implements UserDAO {
         }
         return list;
     }
+
     @Override
     public User findById(String id) {
         String sql = "SELECT * FROM USERS WHERE Id = ?";
@@ -150,6 +149,7 @@ public class UserDAOImpl implements UserDAO {
             return false;
         }
     }
+
     @Override
     public boolean updatePassword(String userId, String newPassword) {
         String sql = "UPDATE USERS SET Password=? WHERE Id=?";
@@ -163,6 +163,7 @@ public class UserDAOImpl implements UserDAO {
         }
         return false;
     }
+
     public List<User> getAllUsers() {
         List<User> list = new ArrayList<>();
         String sql = "SELECT * FROM USERS";
