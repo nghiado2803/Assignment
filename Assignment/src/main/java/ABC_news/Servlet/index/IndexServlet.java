@@ -138,15 +138,36 @@ public class IndexServlet extends HttpServlet {
             return;
         }
 
+        HttpSession session = req.getSession();
+        List<News> recentNews = (List<News>) session.getAttribute("recentNews");
+        if (recentNews == null) {
+            recentNews = new java.util.ArrayList<>();
+        }
+
+        recentNews.removeIf(n -> n.getId().equals(news.getId()));
+
+       
+        recentNews.add(0, news);
+
+       
+        if (recentNews.size() > 5) {
+            recentNews = recentNews.subList(0, 5);
+        }
+
+        session.setAttribute("recentNews", recentNews);
+
+      
         List<News> topViewed = newsDAO.findTopViewedApproved(5);
         List<News> latestNews = newsDAO.findLatestApproved(5);
 
         req.setAttribute("news", news);
         req.setAttribute("topViewed", topViewed);
         req.setAttribute("latestNews", latestNews);
+        req.setAttribute("recentNews", recentNews); 
 
         req.getRequestDispatcher("/views/news_detail.jsp").forward(req, resp);
     }
+
 
     private void doSearch(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -203,11 +224,13 @@ public class IndexServlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
         resp.setContentType("text/html; charset=UTF-8");
+
         HttpSession session = req.getSession();
         User user = (User) session.getAttribute("user");
 
         if (user == null) {
-            resp.getWriter().write("<script>alert('Phiên đăng nhập đã hết hạn!'); window.location='/index';</script>");
+            resp.getWriter().write("<script>alert('Phiên đăng nhập đã hết hạn!'); window.location='" 
+                + req.getContextPath() + "/index.jsp';</script>");
             return;
         }
 
@@ -229,13 +252,14 @@ public class IndexServlet extends HttpServlet {
         boolean success = userDAO.updatePassword(user.getId(), newPass);
 
         if (success) {
-            session.setAttribute("user", user);
-            String redirectUrl = user.isRole() ? "admin/admin.jsp" : "reporter/reporter.jsp";
-            resp.getWriter().write("<script>alert('Đổi mật khẩu thành công!'); window.location='" + redirectUrl + "';</script>");
+            session.invalidate(); 
+            resp.getWriter().write("<script>alert('Đổi mật khẩu thành công! Vui lòng đăng nhập lại.'); "
+                + "window.location='" + req.getContextPath() + "/index';</script>");
         } else {
             resp.getWriter().write("<script>alert('Lỗi khi đổi mật khẩu! Vui lòng thử lại.'); history.back();</script>");
         }
     }
+
 
     private void doSubscribe(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
