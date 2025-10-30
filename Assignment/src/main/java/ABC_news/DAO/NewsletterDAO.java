@@ -5,4 +5,5 @@ public interface NewsletterDAO {
     boolean addSubscriber(String email);
     boolean exists(String email);
     List<String> getActiveEmails();
+    boolean deleteSubscriber(String email);
 }
