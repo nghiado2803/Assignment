@@ -87,7 +87,6 @@
             showModal(targetModalId);
         }
 
-        //  Nếu có error=1 trên URL => mở modal đăng nhập + hiển thị thông báo
         document.addEventListener("DOMContentLoaded", function() {
             const params = new URLSearchParams(window.location.search);
             if (params.get("error") === "1") {
