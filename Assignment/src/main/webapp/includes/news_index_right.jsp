@@ -1,4 +1,3 @@
-
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <aside class="right-col">
@@ -48,5 +47,26 @@
         </c:forEach>
     </ul>
 </div>
+<div class="box recently-viewed">
+    <h3>Tin vừa mới xem</h3>
+    <ul>
+        <c:choose>
+            <c:when test="${not empty recentNews}">
+                <c:forEach var="n" items="${recentNews}" varStatus="loop">
+                    <li>
+                        <span class="number">${loop.index + 1}</span>
+                        <a href="${pageContext.request.contextPath}/detail?id=${n.id}">
+                            ${n.title}
+                        </a>
+                    </li>
+                </c:forEach>
+            </c:when>
+            <c:otherwise>
+                <li>Chưa có bài viết nào được xem gần đây.</li>
+            </c:otherwise>
+        </c:choose>
+    </ul>
+</div>
+
    
 </aside>
