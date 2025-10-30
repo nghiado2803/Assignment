@@ -1,12 +1,9 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jstl/fmt_rt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@ page import="ABC_news.Entity.User" %>
-<%
-    User user = (User) session.getAttribute("user");
-    String fullname = (user != null && user.getFullname() != null) ? user.getFullname() : "Phóng viên";
-%>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -82,34 +79,7 @@
     <header class="site-header">
         <div class="container">
             <div class="logo">ABC <span>News</span></div>
-            <nav class="menu">
-    <a href="${pageContext.request.contextPath}/index"
-       class="${fn:contains(pageContext.request.requestURI, '/index') ? 'active' : ''}">Trang chủ</a>
-
-   <a href="${pageContext.request.contextPath}/category?name=Văn hóa"
-   class="${fn:contains(pageContext.request.requestURI, 'Văn hóa') ? 'active' : ''}">Văn hóa</a>
-
-<a href="${pageContext.request.contextPath}/category?name=Pháp luật"
-   class="${fn:contains(pageContext.request.requestURI, 'Pháp luật') ? 'active' : ''}">Pháp luật</a>
-
-<a href="${pageContext.request.contextPath}/category?name=Thể thao"
-   class="${fn:contains(pageContext.request.requestURI, 'Thể thao') ? 'active' : ''}">Thể thao</a>
-
-
-   <a href="${pageContext.request.contextPath}/reporter"
-   class="${fn:contains(pageContext.request.requestURI, '/reporter') ? 'active' : ''}">
-   Quản lý tin
-</a>
-</nav>
-
-            <div class="header-actions">
-		    	<form action="${pageContext.request.contextPath}/search" method="get" class="search-form">
-				    <input type="text" name="keyword" placeholder="Tìm kiếm tin tức..." class="search-bar" required>
-				    <button type="submit" class="search-btn">🔍</button>
-				</form>
-                <span class="user-info">Xin chào <strong><%= fullname %></strong></span>
-                <a href="${pageContext.request.contextPath}/logout" class="logout-btn">Đăng xuất</a>
-            </div>
+            <%@ include file="../includes/news_index_nav.jsp" %>
         </div>
     </header>
 	
