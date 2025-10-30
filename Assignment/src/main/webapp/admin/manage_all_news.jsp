@@ -1,12 +1,9 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<%@ page import="ABC_news.Entity.User" %>
-<%
-    User user = (User) session.getAttribute("user");
-    String fullname = (user != null && user.getFullname() != null) ? user.getFullname() : "Quản trị viên";
-%>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -110,30 +107,7 @@
 <header class="site-header">
     <div class="container">
         <div class="logo">ABC <span>News</span></div>
-<nav class="menu">
-    <a href="${pageContext.request.contextPath}/index"
-       class="${fn:contains(pageContext.request.requestURI, '/index') ? 'active' : ''}">Trang chủ</a>
-
-    <a href="${pageContext.request.contextPath}/category?name=Văn hóa"
-   class="${fn:contains(pageContext.request.requestURI, 'Văn hóa') ? 'active' : ''}">Văn hóa</a>
-
-<a href="${pageContext.request.contextPath}/category?name=Pháp luật"
-   class="${fn:contains(pageContext.request.requestURI, 'Pháp luật') ? 'active' : ''}">Pháp luật</a>
-
-<a href="${pageContext.request.contextPath}/category?name=Thể thao"
-   class="${fn:contains(pageContext.request.requestURI, 'Thể thao') ? 'active' : ''}">Thể thao</a>
-
-
-    <a href="${pageContext.request.contextPath}/admin"
-       class="${fn:contains(pageContext.request.requestURI, '/admin') ? 'active' : ''}">Quản trị</a>
-</nav>
-
-
-
-<div class="header-actions">
-    Xin chào <strong><%= user.getFullname() != null ? user.getFullname() : "Admin" %></strong>
-    <a href="${pageContext.request.contextPath}/logout" class="logout-btn">Đăng xuất</a>
-</div>
+<%@ include file="../includes/news_index_nav.jsp" %>
     </div>
 </header>
 
@@ -161,7 +135,7 @@
         <td>${n.title}</td>
         <td>${n.categoryName}</td>
 		<td>${n.authorName}</td>
-        <td>${n.postedDate}</td>
+		<td><fmt:formatDate value="${n.postedDate}" pattern="dd/MM/yyyy" /></td>
         <td>${n.status}</td>
      <td>
 	<a href="${pageContext.request.contextPath}/admin/add_edit_news?id=${n.id}" class="action-btn edit-btn">Sửa</a>
