@@ -3,7 +3,6 @@ package ABC_news.Utils;
 import java.sql.*;
 
 public class Jdbc {
-    // Cấu hình thông tin kết nối
     private static final String DRIVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
     private static final String URL = "jdbc:sqlserver://localhost:1433;databaseName=ABC_News;encrypt=false";
     private static final String USER = "vannghia";
