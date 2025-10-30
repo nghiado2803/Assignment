@@ -49,5 +49,16 @@ public class NewsletterDAOImpl implements NewsletterDAO {
         }
         return emails;
     }
-
+    @Override
+    public boolean deleteSubscriber(String email) {
+        String sql = "DELETE FROM NEWSLETTERS WHERE Email = ?";
+        try (Connection conn = Jdbc.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, email);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
