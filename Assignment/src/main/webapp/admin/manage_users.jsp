@@ -1,12 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@ page import="ABC_news.Entity.User" %>
-
-<%
-    User user = (User) session.getAttribute("user");
-    String fullname = (user != null && user.getFullname() != null) ? user.getFullname() : "Quản trị viên";
-%>
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -18,7 +12,6 @@
     <meta name="author" content="ABC News">
     <title>ABC News - Quản lý người dùng</title>
 
-    <!-- Font và CSS -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Open+Sans:wght@400;600&display=swap">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
     <style>
@@ -150,27 +143,7 @@ body.modal-open {
         <div class="container">
             <div class="logo">ABC <span>News</span></div>
 
-            <nav class="menu">
-                <a href="${pageContext.request.contextPath}/index"
-                   class="${fn:contains(pageContext.request.requestURI, '/index') ? 'active' : ''}">Trang chủ</a>
-
-               <a href="${pageContext.request.contextPath}/category?name=Văn hóa"
-   class="${fn:contains(pageContext.request.requestURI, 'Văn hóa') ? 'active' : ''}">Văn hóa</a>
-
-<a href="${pageContext.request.contextPath}/category?name=Pháp luật"
-   class="${fn:contains(pageContext.request.requestURI, 'Pháp luật') ? 'active' : ''}">Pháp luật</a>
-
-<a href="${pageContext.request.contextPath}/category?name=Thể thao"
-   class="${fn:contains(pageContext.request.requestURI, 'Thể thao') ? 'active' : ''}">Thể thao</a>
-               
-                <a href="${pageContext.request.contextPath}/admin"
-                   class="${fn:contains(pageContext.request.requestURI, '/admin') ? 'active' : ''}">Quản trị</a>
-            </nav>
-
-            <div class="header-actions">
-                Xin chào <strong><%= fullname %></strong>
-                <a href="${pageContext.request.contextPath}/logout" class="logout-btn">Đăng xuất</a>
-            </div>
+           <%@ include file="../includes/news_index_nav.jsp" %>
         </div>
     </header>
 
@@ -233,10 +206,6 @@ body.modal-open {
             <span class="custom-close-btn" onclick="closeModal('add-user-modal')">&times;</span>
             <h2>Thêm người dùng</h2>
             <form action="${pageContext.request.contextPath}/admin/add_user" method="post">
-                <div class="custom-form-group">
-                    <label for="add-userId">Mã người dùng</label>
-                    <input type="text" id="add-userId" name="id" placeholder="Nhập mã người dùng (ví dụ: pv01)" required>
-                </div>
                 <div class="custom-form-group">
                     <label for="add-fullName">Họ và tên</label>
                     <input type="text" id="add-fullName" name="fullname" placeholder="Nhập họ và tên" required>
