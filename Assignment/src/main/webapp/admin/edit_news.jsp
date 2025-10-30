@@ -2,12 +2,18 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ page import="ABC_news.Entity.User" %>
+<%@ page import="ABC_news.DAO.CategoryDAOImpl" %>
+<%@ page import="ABC_news.Entity.Category" %>
+<%@ page import="java.util.List" %>
 
 <%
     User user = (User) session.getAttribute("user");
     String fullname = (user != null && user.getFullname() != null)
             ? user.getFullname() : "Người dùng";
     boolean isAdmin = (user != null && user.isRole());
+    CategoryDAOImpl dao = new CategoryDAOImpl();
+    List<Category> navCategories = dao.findAll();
+    request.setAttribute("navCategories", navCategories);
 %>
 
 <!DOCTYPE html>
@@ -62,7 +68,7 @@
         </nav>
 
         <div class="header-actions">
-            <span class="user-info">Xin chào, <strong><%= fullname %></strong></span>
+            <span class="user-info">Xin chào <strong><%= fullname %></strong></span>
             <a href="${pageContext.request.contextPath}/logout" class="logout-btn">Đăng xuất</a>
         </div>
     </div>
