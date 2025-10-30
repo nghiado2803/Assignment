@@ -72,17 +72,17 @@ public class ManageUsersServlet extends HttpServlet {
 
     private void addUser(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
-        String id = req.getParameter("id");
+        req.setCharacterEncoding("UTF-8");
+
         String password = req.getParameter("password");
         String fullname = req.getParameter("fullname");
         String email = req.getParameter("email");
         String mobile = req.getParameter("mobile");
         String birthday = req.getParameter("birthday");
-        boolean gender = Boolean.parseBoolean(req.getParameter("gender"));
-        boolean role = Boolean.parseBoolean(req.getParameter("role"));
+        boolean gender = "1".equals(req.getParameter("gender"));
+        boolean role = "1".equals(req.getParameter("role"));
 
         User user = new User();
-        user.setId(id);
         user.setPassword(password);
         user.setFullname(fullname);
         user.setEmail(email);
@@ -100,6 +100,7 @@ public class ManageUsersServlet extends HttpServlet {
 
         resp.sendRedirect(req.getContextPath() + "/admin/manage_users");
     }
+
 
     private void editUser(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
